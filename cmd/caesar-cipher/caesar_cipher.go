@@ -41,14 +41,15 @@ func caesarCipher(s string, k int32) string {
 			return element
 		}
 
-		// 0+3
-		if position+shiftBy < len(letters) {
-			return letters[position+shiftBy]
-		} else {
-			moveToEndCount := len(letters) - 1 - position
-			moveFromBeginningCount := shiftBy - moveToEndCount - 1
-			return letters[moveFromBeginningCount]
+		newPosition := position
+		for i := 1; i <= shiftBy; i++ {
+			newPosition++
+			if newPosition > len(letters)-1 {
+				newPosition = 0
+			}
 		}
+
+		return letters[newPosition]
 	}
 
 	result := ""
