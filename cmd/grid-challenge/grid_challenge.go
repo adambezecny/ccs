@@ -43,8 +43,8 @@ func gridChallenge(grid []string) string {
 	for _, column := range columns {
 		r := strings.Split(column, "")
 		sort.Strings(r)
-		sortedColumns := strings.Join(r, "")
-		if sortedColumns != column {
+		sortedColumn := strings.Join(r, "")
+		if sortedColumn != column {
 			return "NO"
 		}
 	}
