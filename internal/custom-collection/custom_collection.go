@@ -21,4 +21,7 @@ https://go.dev/blog/slices-intro
 https://www.geeksforgeeks.org/design-a-data-structure-that-supports-insert-delete-search-and-getrandom-in-constant-time/
 
 https://www.geeksforgeeks.org/a-data-structure-question/   LRU
+
+
+https://reintech.io/blog/guide-to-go-container-package-lists-rings-heaps#google_vignette
 */
