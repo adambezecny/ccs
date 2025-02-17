@@ -18,7 +18,7 @@ import (
  *  2. INTEGER k
  */
 
-func superDigit(n string, k int32) int32 {
+func superDigitRecursive(n string, k int32) int32 {
 	str := ""
 
 	for i := 0; i < int(k); i++ {
@@ -45,9 +45,51 @@ func superDigit(n string, k int32) int32 {
 		sum += digit
 	}
 
-	return superDigit(strconv.Itoa(sum), 1)
+	return superDigitRecursive(strconv.Itoa(sum), 1)
 }
 
+func superDigit(n string, k int32) int32 {
+	str := ""
+
+	var sumDigits = func(digits []string) int {
+		sum := 0
+		for _, digitStr := range digits {
+			digit, err := strconv.Atoi(digitStr)
+			if err != nil {
+				panic(err)
+			}
+
+			sum += digit
+		}
+		return sum
+	}
+
+	var isSingleDigit = func(digit int) bool {
+		return len(strconv.Itoa(digit)) == 1
+	}
+
+	for i := 0; i < int(k); i++ {
+		str += n
+	}
+
+	sumOfDigits := 0
+	digits := strings.Split(str, "")
+	for {
+		sumOfDigits = sumDigits(digits)
+		if isSingleDigit(sumOfDigits) {
+			break
+		} else {
+			digits = strings.Split(strconv.Itoa(sumOfDigits), "")
+		}
+	}
+
+	return int32(sumOfDigits)
+}
+
+/*
+3546630947312051453014172159647935984478824945973141333062252613718025688716704470547449723886626736 100000
+expected output is 5
+*/
 func main() {
 	reader := bufio.NewReaderSize(os.Stdin, 16*1024*1024)
 
