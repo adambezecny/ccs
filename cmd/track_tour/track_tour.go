@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"container/list"
 	"fmt"
 	"io"
 	"os"
@@ -16,20 +17,62 @@ import (
  * The function accepts 2D_INTEGER_ARRAY petrolpumps as parameter.
  */
 
-func truckTour(petrolpumps [][]int32) int32 {
-	// Write your code here
+func printList(mylist *list.List) {
+	fmt.Println("-----")
+	for element := mylist.Front(); element != nil; element = element.Next() {
+		fmt.Println(element.Value)
+	}
+	fmt.Println("-----")
+}
 
+func truckTour(petrolpumps [][]int32) int32 {
+	var gasLevel int32 = 0
+	pumpOffset := 0
+
+	petrolPumpsList := list.New()
+	for i := 0; i < len(petrolpumps); i++ {
+		petrolPumpsList.PushBack(petrolpumps[i])
+	}
+
+	var found bool
+	for i := 0; i < len(petrolpumps); i++ { // perform only as many iterations as we have pumps
+		found = true
+		//printList(petrolPumpsList)
+		for element := petrolPumpsList.Front(); element != nil; element = element.Next() {
+			elementVal, _ := element.Value.([]int32)
+			gasTopUp := elementVal[0]
+			distanceToNextPump := elementVal[1]
+			gasLevel += gasTopUp
+			gasLevel -= distanceToNextPump
+
+			if gasLevel < 0 {
+				found = false
+				break
+			}
+		}
+
+		if found {
+			break
+		} else {
+			gasLevel = 0
+			pumpOffset++
+			// move first element to the end
+			element := petrolPumpsList.Front()
+			elementVal, _ := element.Value.([]int32)
+			petrolPumpsList.Remove(element)
+			petrolPumpsList.PushBack(elementVal)
+		}
+	}
+
+	if found {
+		return int32(pumpOffset)
+	} else {
+		return -1
+	}
 }
 
 func main() {
 	reader := bufio.NewReaderSize(os.Stdin, 16*1024*1024)
-
-	stdout, err := os.Create(os.Getenv("OUTPUT_PATH"))
-	checkError(err)
-
-	defer stdout.Close()
-
-	writer := bufio.NewWriterSize(stdout, 16*1024*1024)
 
 	nTemp, err := strconv.ParseInt(strings.TrimSpace(readLine(reader)), 10, 64)
 	checkError(err)
@@ -56,9 +99,7 @@ func main() {
 
 	result := truckTour(petrolpumps)
 
-	fmt.Fprintf(writer, "%d\n", result)
-
-	writer.Flush()
+	fmt.Printf("%d\n", result)
 }
 
 func readLine(reader *bufio.Reader) string {

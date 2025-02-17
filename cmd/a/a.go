@@ -1,18 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"container/list"
+	"fmt"
+)
 
+func printList(mylist *list.List) {
+	fmt.Println("-----")
+	for element := mylist.Front(); element != nil; element = element.Next() {
+		fmt.Println(element.Value)
+	}
+	fmt.Println("-----")
+}
 func main() {
-	str := "adxm"
-	/*fmt.Println(str[:0] + str[1:])
-	fmt.Println(str[:1] + str[2:])
-	fmt.Println(str[:2] + str[3:])
-	fmt.Println(str[:3] + str[4:])*/
+	mylist := list.New()
+	mylist.PushBack(1)
+	mylist.PushBack(2)
 
-	fmt.Println(str[0:1])
-	fmt.Println(str[3:4])
+	printList(mylist)
 
-	fmt.Println(str[1:2])
-	fmt.Println(str[2:3])
+	element := mylist.Front()
+	elementVal := element.Value
+	mylist.Remove(element)
+	mylist.PushBack(elementVal)
 
+	printList(mylist)
 }
