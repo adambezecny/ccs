@@ -68,14 +68,19 @@ func superDigit(n string, k int32) int32 {
 		return len(strconv.Itoa(digit)) == 1
 	}
 
-	for i := 0; i < int(k); i++ {
+	/*for i := 0; i < int(k); i++ {
 		str += n
-	}
+	}*/
+	str = n
 
 	sumOfDigits := 0
 	digits := strings.Split(str, "")
 	for {
 		sumOfDigits = sumDigits(digits)
+		if k > 1 {
+			sumOfDigits *= int(k)
+			k = 1
+		}
 		if isSingleDigit(sumOfDigits) {
 			break
 		} else {
@@ -89,6 +94,10 @@ func superDigit(n string, k int32) int32 {
 /*
 3546630947312051453014172159647935984478824945973141333062252613718025688716704470547449723886626736 100000
 expected output is 5
+
+148 3 -> expected output is 3
+9875 4 -> 8
+123 3 -> 9
 */
 func main() {
 	reader := bufio.NewReaderSize(os.Stdin, 16*1024*1024)
