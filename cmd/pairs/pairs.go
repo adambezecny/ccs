@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 /*
 https://tomoharutsutsumi.medium.com/how-to-avoid-o-n%C2%B2-60eaa61f523a
+https://dev.to/leandronsp/how-to-reduce-the-time-complexity-of-nested-loops-1lkd
+
+two pointers in loop approach: https://loopccew.medium.com/two-pointer-approach-5de851731ce8
 */
 
 /*
@@ -21,8 +25,32 @@ https://tomoharutsutsumi.medium.com/how-to-avoid-o-n%C2%B2-60eaa61f523a
  *  1. INTEGER k
  *  2. INTEGER_ARRAY arr
  */
-
+// https://www.youtube.com/watch?v=xtOBbWMc0ZA
 func pairs(k int32, arr []int32) int32 {
+	arrSorted := make([]int, len(arr))
+	for idx, item := range arr {
+		arrSorted[idx] = int(item)
+	}
+	sort.Ints(arrSorted)
+
+	counter := 0
+
+	for i := 0; i < len(arr); i++ {
+		for j := i + 1; j < len(arr); j++ {
+			if arrSorted[j]-arrSorted[i] == int(k) {
+				counter++
+			}
+			if arrSorted[j]-arrSorted[i] > int(k) {
+				break
+			}
+		}
+	}
+
+	return int32(counter)
+}
+
+// very slow, O(n^2) complexity
+func pairsSlow(k int32, arr []int32) int32 {
 	arrLen := len(arr)
 	counter := 0
 	for i := 0; i < arrLen; i++ {
