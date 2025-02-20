@@ -13,6 +13,10 @@ func printList(mylist *list.List) {
 	fmt.Println("-----")
 }
 func main() {
+	str := "abc"
+	fmt.Println(str[1:2]) //2nd character
+	fmt.Println(str[2:3]) //3nd character
+	fmt.Println("Adam-----")
 	mylist := list.New()
 	mylist.PushBack(1)
 	mylist.PushBack(2)
