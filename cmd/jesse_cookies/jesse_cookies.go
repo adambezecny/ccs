@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"container/list"
 	"fmt"
 	"io"
 	"os"
@@ -19,7 +20,87 @@ import (
  *  2. INTEGER_ARRAY A
  */
 
+func printList(mylist *list.List) {
+	fmt.Println("printList-----")
+	for element := mylist.Front(); element != nil; element = element.Next() {
+		fmt.Println(element.Value)
+	}
+	fmt.Println("-----printList")
+}
+
+func insertMixedCooky(cookie int, cookies *list.List) {
+	for iteratedCookie := cookies.Front(); iteratedCookie != nil; iteratedCookie = iteratedCookie.Next() {
+		iteratedCookieVal := iteratedCookie.Value.(int)
+		if iteratedCookieVal >= cookie {
+			cookies.InsertBefore(cookie, iteratedCookie)
+			return
+		}
+	}
+	cookies.PushBack(cookie)
+}
+
 func cookies(k int32, arr []int32) int32 {
+	var iterations int32 = 0
+
+	sweetEnough := func(k int32, cookies *list.List) bool {
+		for cookie := cookies.Front(); cookie != nil; cookie = cookie.Next() {
+			if cookie.Value.(int) < int(k) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	sortedCookies := make([]int, len(arr))
+	for idx, item := range arr {
+		sortedCookies[idx] = int(item)
+	}
+	sort.Ints(sortedCookies)
+
+	cookieList := list.New()
+	for _, cookie := range sortedCookies {
+		cookieList.PushBack(cookie)
+	}
+	//printList(cookieList)
+
+	if sweetEnough(k, cookieList) {
+		return 0
+	}
+
+	found := false
+	for {
+		iterations++
+		cookie1 := cookieList.Front()
+		cookie1Val := cookie1.Value.(int)
+		cookieList.Remove(cookie1)
+		cookie2 := cookieList.Front()
+		cookie2Val := cookie2.Value.(int)
+		cookieList.Remove(cookie2)
+		//printList(cookieList)
+
+		mixedCookie := cookie1Val + 2*cookie2Val
+		insertMixedCooky(mixedCookie, cookieList)
+		//printList(cookieList)
+
+		if sweetEnough(k, cookieList) {
+			found = true
+			break
+		}
+
+		if cookieList.Len() == 1 {
+			break
+		}
+	}
+
+	if found {
+		return iterations
+	} else {
+		return -1
+	}
+}
+
+func cookiesSlow(k int32, arr []int32) int32 {
 	var iterations int32 = 0
 
 	sweetEnough := func(k int32, cookies []int) bool {
