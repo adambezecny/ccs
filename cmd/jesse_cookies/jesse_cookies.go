@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"container/heap"
 	"container/list"
 	"fmt"
 	"io"
@@ -10,6 +11,16 @@ import (
 	"strconv"
 	"strings"
 )
+
+/*
+https://yuminlee2.medium.com/golang-heap-data-structure-45760f9562dc
+https://www.youtube.com/watch?v=cJtq8eZCWpk
+
+!!
+https://medium.com/better-programming/using-heaps-to-speed-up-code-performance-in-go-b17ab07d2d5f
+!!
+
+*/
 
 /*
  * Complete the 'cookies' function below.
@@ -39,7 +50,7 @@ func insertMixedCooky(cookie int, cookies *list.List) {
 	cookies.PushBack(cookie)
 }
 
-func cookies(k int32, arr []int32) int32 {
+func cookiesSlow(k int32, arr []int32) int32 {
 	var iterations int32 = 0
 
 	sweetEnough := func(k int32, cookies *list.List) bool {
@@ -100,7 +111,8 @@ func cookies(k int32, arr []int32) int32 {
 	}
 }
 
-func cookiesSlow(k int32, arr []int32) int32 {
+// quicker that previous one but still not quick enough to pass all tests
+func cookiesArrayBased(k int32, arr []int32) int32 {
 	var iterations int32 = 0
 
 	sweetEnough := func(k int32, cookies []int) bool {
@@ -148,6 +160,69 @@ func cookiesSlow(k int32, arr []int32) int32 {
 	} else {
 		return -1
 	}
+}
+
+// see https://pkg.go.dev/container/heap
+// https://yuminlee2.medium.com/golang-heap-data-structure-45760f9562dc
+// An IntMinHeap is a min-heap of ints.
+
+type IntMinHeap []int32
+
+func (h IntMinHeap) Len() int { return len(h) }
+
+func (h IntMinHeap) Less(i, j int) bool { return h[i] < h[j] }
+
+func (h IntMinHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+
+func (h *IntMinHeap) Push(x any) {
+	*h = append(*h, x.(int32))
+}
+
+func (h *IntMinHeap) Pop() any {
+	old := *h
+	lastVal := old[len(old)-1]
+	*h = old[:len(old)-1]
+	return lastVal
+}
+
+func (h IntMinHeap) AsSlice() []int32 {
+	return []int32(h)
+}
+
+func cookies(k int32, arr []int32) int32 {
+	if len(arr) == 0 {
+		return -1
+	}
+
+	// initialize heap
+	hv := IntMinHeap(arr)
+	h := &hv
+	heap.Init(h) // #complexity: O(n)
+
+	var cont, min1, min2 int32
+	for h.Len() > 1 {
+
+		min1 = heap.Pop(h).(int32) // #complexity: O(log n)
+
+		if min1 >= k {
+			// if the lowest value is greater than k, we know that all remaining values will be too
+			return cont
+		}
+
+		min2 = heap.Pop(h).(int32) // #complexity: O(log n)
+		heap.Push(h, min1+2*min2)  // #complexity: O(log n)
+		cont++
+
+	}
+
+	// total worst case complexity: O(n) + 3 O(log n) + 3 O(log n-2) + 3 O(log n-3)... = O(n)
+
+	min1 = heap.Pop(h).(int32) // #complexity: O(1), since h has length = 1
+	if min1 >= k {
+		return cont
+	}
+
+	return -1
 }
 
 func main() {

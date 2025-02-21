@@ -15,6 +15,13 @@ func TestCookiesSlow(t *testing.T) {
 	assert.Equal(t, int32(0), cookiesSlow(1, []int32{2, 3, 4}))
 }
 
+func TestCookiesArrayBased(t *testing.T) {
+	assert.Equal(t, int32(4), cookiesArrayBased(9, []int32{2, 7, 3, 6, 4, 6}))
+	assert.Equal(t, int32(2), cookiesArrayBased(7, []int32{1, 2, 3, 9, 10, 12}))
+	assert.Equal(t, int32(-1), cookiesArrayBased(1000, []int32{1, 2, 3}))
+	assert.Equal(t, int32(0), cookiesArrayBased(1, []int32{2, 3, 4}))
+}
+
 func TestCookies(t *testing.T) {
 	assert.Equal(t, int32(4), cookies(9, []int32{2, 7, 3, 6, 4, 6}))
 	assert.Equal(t, int32(2), cookies(7, []int32{1, 2, 3, 9, 10, 12}))
