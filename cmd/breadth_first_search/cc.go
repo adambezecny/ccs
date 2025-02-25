@@ -1,9 +1,16 @@
 package main
 
+/*
+https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+https://medium.com/@rjromero/an-example-of-the-breadth-first-search-algorithm-in-golang-acd7df6559d6
+https://pkg.go.dev/github.com/dominikbraun/graph
+*/
+
 import (
 	"bufio"
 	"container/list"
 	"fmt"
+	"github.com/dominikbraun/graph"
 	"io"
 	"os"
 	"strconv"
@@ -92,6 +99,39 @@ func breadthFirstSearch(tree map[int32]Node, root, target int32) string {
 }
 
 func bfs(n int32, m int32, edges [][]int32, s int32) []int32 {
+	g := graph.New(graph.IntHash)
+
+	for i := 1; i <= int(n); i++ {
+		_ = g.AddVertex(i)
+	}
+
+	for _, edge := range edges {
+		_ = g.AddEdge(int(edge[0]), int(edge[1]))
+	}
+
+	result := make([]int32, n-1)
+	for idx, _ := range result {
+		result[idx] = int32(-1)
+	}
+
+	graph.BFS(g, int(s), func(visitedNode int) bool {
+		fmt.Println(visitedNode)
+		if visitedNode == int(s) {
+			return false
+		}
+		pathNodes, err := graph.ShortestPath(g, int(s), visitedNode)
+		if err != nil {
+			panic(err)
+		}
+
+		result[visitedNode-2] = int32((len(pathNodes) - 1) * 6)
+		return false
+	})
+
+	return result
+}
+
+func bfs0(n int32, m int32, edges [][]int32, s int32) []int32 {
 	tree := make(map[int32]Node)
 
 	for i := int32(1); i <= n; i++ {

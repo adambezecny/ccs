@@ -3,6 +3,7 @@ package breadth_first_search
 /*
 https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
 https://medium.com/@rjromero/an-example-of-the-breadth-first-search-algorithm-in-golang-acd7df6559d6
+https://pkg.go.dev/github.com/dominikbraun/graph
 */
 
 import (
